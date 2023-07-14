@@ -42,7 +42,7 @@ public class SecurityConfiguration {
                 .and();
 
         // Set permissions on endpoints
-        http.authorizeHttpRequests().requestMatchers("/v1/auth/**").permitAll() // public endpoints
+        http.authorizeHttpRequests().requestMatchers("/api/v1/auth/**").permitAll() // public endpoints
                 .anyRequest().authenticated();  // all other requests need to be authenticated
 
         // Add a filter to validate the tokens with every request

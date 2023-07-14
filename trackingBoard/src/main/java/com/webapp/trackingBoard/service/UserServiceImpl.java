@@ -1,11 +1,15 @@
 package com.webapp.trackingBoard.service;
 
+import com.webapp.trackingBoard.entities.User;
 import com.webapp.trackingBoard.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 @Slf4j
@@ -18,21 +22,23 @@ public class UserServiceImpl implements UserService {
 	private LoginServiceImpl loginService;
 
 	@Override
-	public boolean login(String email, String password) {
+	public User login(String email, String password) {
 		try {
 			log.info("Login with user: " + email);
 			UserDetails userDetails = loginService.loadUserByUsername(email);
 			if (userDetails == null) {
-				return false;
+				return null;
 			}
 			if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-				return false;
+				return null;
 			}
-			return true;
+			List<GrantedAuthority> roles = new ArrayList<>(userDetails.getAuthorities());
+			User user = User.builder().email(email).password("******").role(roles.get(0).getAuthority()).build();
+			return user;
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		return false;
+		return null;
 	}
 
 }

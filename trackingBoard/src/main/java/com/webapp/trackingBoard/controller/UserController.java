@@ -1,6 +1,7 @@
 package com.webapp.trackingBoard.controller;
 
 
+import com.webapp.trackingBoard.entities.User;
 import com.webapp.trackingBoard.helper.AuthenticationUtil;
 import com.webapp.trackingBoard.helper.ValidtionUtils;
 import com.webapp.trackingBoard.request.LoginRequest;
@@ -32,20 +33,24 @@ public class UserController {
 		return ResponseEntity.ok("Service up!!!");
 	}
 
-	@RequestMapping(value = "/v1/auth/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/api/v1/auth/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest rq) {
 		LoginResponse res = LoginResponse.builder().build();
-//		if (ValidtionUtils.checkEmptyOrNull(rq.getEmail(), rq.getPassword())) {
-//			return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
-//		}
+		if (ValidtionUtils.checkEmptyOrNull(rq.getEmail(), rq.getPassword())) {
+			res.setMessage("Email or Password cannot be null");
+			return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+		}
 		try {
-			boolean resultLogin = userService.login(rq.getEmail(), rq.getPassword());
-			log.info("resultLogin: " + resultLogin);
-			if (!resultLogin) {
-				return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+			User user = userService.login(rq.getEmail(), rq.getPassword());
+			log.info("resultLogin: " + user);
+			if (user == null) {
+				res.setMessage("Email or Password not valid");
+				return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
 			}
 
 			final String token = jwtTokenUtil.generateToken(rq.getEmail() + "-" + rq.getPassword());
+			res.setUser(user);
+			res.setMessage("Success");
 			res.setToken(token);
 			return new ResponseEntity<>(res, HttpStatus.OK);
 		} catch (Exception e) {
