@@ -4,11 +4,14 @@ import com.webapp.trackingBoard.entities.User;
 import com.webapp.trackingBoard.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +37,8 @@ public class LoginServiceImpl implements UserDetailsService {
 		roleList.add(role);
 		org.springframework.security.core.userdetails.User userDetail;
 		try {
+			Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), roleList);
+			SecurityContextHolder.getContext().setAuthentication(authentication);
 			userDetail = new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), roleList);
 			return userDetail;
 		} catch (Exception e) {
