@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 public class LogoutService implements LogoutHandler {
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		log.info("Logout with user: " + authentication.getPrincipal());
+		if (authentication != null) {
+			log.info("Logout with user: " + authentication.getPrincipal());
+		}
 		final String authHeader = request.getHeader("Authorization");
 		if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
 			return;

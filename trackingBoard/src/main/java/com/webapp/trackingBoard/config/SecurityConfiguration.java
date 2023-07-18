@@ -102,7 +102,9 @@ public class SecurityConfiguration {
 
         // Set logout handler
         http.logout().logoutUrl("/api/v1/auth/logout").addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)));
+                .logoutSuccessHandler((new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");
 
         // Add a filter to validate the tokens with every request
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
