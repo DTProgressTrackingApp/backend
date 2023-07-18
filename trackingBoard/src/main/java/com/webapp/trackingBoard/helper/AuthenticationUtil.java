@@ -37,6 +37,7 @@ public class AuthenticationUtil implements Serializable {
 	//retrieve user from jwt token
 	public User getUserFromToken(String token) throws JsonProcessingException {
 		String obj = getClaimFromToken(token, Claims::getSubject);
+		log.info("Claim from token: " + obj);
 		User user = objectMapper.readValue(obj, User.class);
 		return user;
 	}
@@ -62,9 +63,9 @@ public class AuthenticationUtil implements Serializable {
 	}
 
 	//generate token for user
-	public String generateToken(String value) throws JsonProcessingException {
+	public String generateToken(User value) throws JsonProcessingException {
 		Map<String, Object> claims = new HashMap<>();
-		return doGenerateToken(claims, value);
+		return doGenerateToken(claims, objectMapper.writeValueAsString(value));
 	}
 
 	//while creating the token -

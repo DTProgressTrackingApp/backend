@@ -27,7 +27,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(value = "/health", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/v1/auth/health", method = RequestMethod.GET)
 	public ResponseEntity<?> createAuthenticationToken() throws Exception {
 		return ResponseEntity.ok("Service up!!!");
 	}
@@ -47,7 +47,7 @@ public class UserController {
 				return new ResponseEntity<>(res, HttpStatus.FORBIDDEN);
 			}
 
-			final String token = jwtTokenUtil.generateToken(rq.getEmail() + "-" + rq.getPassword());
+			final String token = jwtTokenUtil.generateToken(user);
 			res.setUser(user);
 			res.setMessage("Success");
 			res.setToken(token);

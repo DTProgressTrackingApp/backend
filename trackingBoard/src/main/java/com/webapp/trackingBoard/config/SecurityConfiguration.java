@@ -94,10 +94,8 @@ public class SecurityConfiguration {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and();
 
-//        http.authenticationProvider()
-
         // Set permissions on endpoints
-        http.authorizeHttpRequests().requestMatchers("/api/v1/auth/**").permitAll() // public endpoints
+        http.authorizeHttpRequests().requestMatchers("/api/v1/auth/login").permitAll() // public endpoints
                 .anyRequest().authenticated();  // all other requests need to be authenticated
 
         // Set logout handler
